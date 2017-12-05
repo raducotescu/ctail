@@ -96,4 +96,8 @@ awk_script()
     fi
 }
 
-$AWK -f <(awk_script) <($TAIL "$@")
+if [ -t 0 ]; then
+    $AWK -f <(awk_script) <($TAIL "$@")
+else
+    $AWK -f <(awk_script)
+fi
