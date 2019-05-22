@@ -9,5 +9,4 @@ A `ctail.config` file can be used to configure `ctail` in order to use different
 same folder as `ctail`. For an example file, please check the `ctail.config` file from the repository.
 
 ### Compatibility with Mac OS X
-On Mac OS X you must replace line 1 of the script with the location where you have installed Bash 4. Bash 3 (which comes by default on Mac
-OS X) does not support associative arrays.
+Should work on Mac OS X without any modification.
