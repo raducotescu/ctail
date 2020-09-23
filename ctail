@@ -16,10 +16,19 @@ if ! TAIL=$(which tail); then
     echo -e "Cannot find tail executable.\n"
     exit 1
 fi
+
 if ! AWK=$(which awk); then
     echo -e "Cannot find awk executable.\n"
     exit 1
 fi
+
+awk_opts=()
+# detect if awk is mawk (which is common on debian based distros)
+case "$(basename "$(readlink -f "$AWK")")" in
+mawk)
+    awk_opts+=(-W interactive)
+    ;;
+esac
 
 declare -A log
 log["INFO"]="BWhite"
@@ -99,7 +108,7 @@ awk_script() {
 }
 
 if [ -t 0 ]; then
-    $AWK -f <(awk_script) <($TAIL "$@")
+    $AWK "${awk_opts[@]}" -f <(awk_script) < <($TAIL "$@")
 else
-    $AWK -f <(awk_script)
+    $AWK "${awk_opts[@]}" -f <(awk_script)
 fi
