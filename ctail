@@ -24,8 +24,8 @@ fi
 
 awk_opts=()
 # detect if awk is mawk (which is common on debian based distros)
-case "$(basename "$(readlink -f "$AWK")")" in
-mawk)
+case "$(realpath "$AWK")" in
+*/mawk)
     awk_opts+=(-W interactive)
     ;;
 esac
