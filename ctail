@@ -6,18 +6,14 @@
 # ctail is a small configurable Bash script which can colour log entries      #
 # outputted through tail. It actually wraps tail, piping its output through   #
 # an awk script that colorizes the output according to log severity levels.   #
-#                                                                             #
-# NOTE: On Mac OS X you must replace line 1 of the script with the location   #
-# where you have installed Bash 4. Bash 3 (which comes by default on Mac OS X)#
-# does not support associative arrays.                                        #
 ###############################################################################
 
-if ! TAIL=$(which tail); then
+if ! TAIL="$(which tail)"; then
     echo -e "Cannot find tail executable.\n"
     exit 1
 fi
 
-if ! AWK=$(which awk); then
+if ! AWK="$(which awk)"; then
     echo -e "Cannot find awk executable.\n"
     exit 1
 fi
