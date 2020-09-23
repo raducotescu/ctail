@@ -86,13 +86,12 @@ colours["BIPurple"]="\033[1;95m"
 colours["BICyan"]="\033[1;96m"
 colours["BIWhite"]="\033[1;97m"
 
-awk_script()
-{
-	for i in "${!log[@]}"; do
-		echo "/$i/ {print \"${colours[${log[$i]}]}\" \$0 \"\033[39m\"; next;}"
-	done
+awk_script() {
+    for i in "${!log[@]}"; do
+        echo "/$i/ {print \"${colours[${log[$i]}]}\" \$0 \"\033[39m\"; next;}"
+    done
 
-	if [[ "$print_lines_not_matched" == "1" ]]; then
+    if [[ "$print_lines_not_matched" == "1" ]]; then
         # let us not miss anything that did not match any of the above colourisation rules
         # shellcheck disable=SC2016
         echo '{print $0}'
