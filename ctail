@@ -16,10 +16,19 @@ if ! TAIL=$(which tail); then
     echo -e "Cannot find tail executable.\n"
     exit 1
 fi
+
 if ! AWK=$(which awk); then
     echo -e "Cannot find awk executable.\n"
     exit 1
 fi
+
+awk_opts=()
+# detect if awk is mawk (which is common on debian based distros)
+case "$(realpath "$AWK")" in
+*/mawk)
+    awk_opts+=(-W interactive)
+    ;;
+esac
 
 declare -A log
 log["INFO"]="BWhite"
@@ -28,16 +37,18 @@ log["WARN"]="BYellow"
 log["DEBUG"]="BGreen"
 
 # keep original behaviour; hide lines that does not match any of the pattern
-: ${print_lines_not_matched:=0}
+: "${print_lines_not_matched:=0}"
 
 # keeping the original behaviour; load config from the ctail script's directory
-CWD=`dirname $0`
+CWD="$(dirname "$0")"
 if [[ -f "$CWD/ctail.config" ]]; then
+    # shellcheck disable=SC1090
     source "$CWD/ctail.config"
 fi
 
 # if there is a config in $HOME, load that
 if [[ -f "$HOME/ctail.config" ]]; then
+    # shellcheck disable=SC1090
     source "$HOME/ctail.config"
 fi
 
@@ -84,20 +95,20 @@ colours["BIPurple"]="\033[1;95m"
 colours["BICyan"]="\033[1;96m"
 colours["BIWhite"]="\033[1;97m"
 
-awk_script()
-{
-	for i in "${!log[@]}"; do
-		echo "/$i/ {print \"${colours[${log[$i]}]}\" \$0 \"\033[39m\"; next;}"
-	done
+awk_script() {
+    for i in "${!log[@]}"; do
+        echo "/$i/ {print \"${colours[${log[$i]}]}\" \$0 \"\033[39m\"; next;}"
+    done
 
-	if [[ "$print_lines_not_matched" == "1" ]]; then
+    if [[ "$print_lines_not_matched" == "1" ]]; then
         # let us not miss anything that did not match any of the above colourisation rules
+        # shellcheck disable=SC2016
         echo '{print $0}'
     fi
 }
 
 if [ -t 0 ]; then
-    $AWK -f <(awk_script) <($TAIL "$@")
+    $AWK "${awk_opts[@]}" -f <(awk_script) < <($TAIL "$@")
 else
-    $AWK -f <(awk_script)
+    $AWK "${awk_opts[@]}" -f <(awk_script)
 fi
