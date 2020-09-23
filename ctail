@@ -28,16 +28,18 @@ log["WARN"]="BYellow"
 log["DEBUG"]="BGreen"
 
 # keep original behaviour; hide lines that does not match any of the pattern
-: ${print_lines_not_matched:=0}
+: "${print_lines_not_matched:=0}"
 
 # keeping the original behaviour; load config from the ctail script's directory
-CWD=`dirname $0`
+CWD="$(dirname "$0")"
 if [[ -f "$CWD/ctail.config" ]]; then
+    # shellcheck disable=SC1090
     source "$CWD/ctail.config"
 fi
 
 # if there is a config in $HOME, load that
 if [[ -f "$HOME/ctail.config" ]]; then
+    # shellcheck disable=SC1090
     source "$HOME/ctail.config"
 fi
 
@@ -92,6 +94,7 @@ awk_script()
 
 	if [[ "$print_lines_not_matched" == "1" ]]; then
         # let us not miss anything that did not match any of the above colourisation rules
+        # shellcheck disable=SC2016
         echo '{print $0}'
     fi
 }
